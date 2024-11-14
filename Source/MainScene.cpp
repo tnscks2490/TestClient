@@ -275,7 +275,7 @@ void MainScene::update(float delta)
 
     case GameState::update:
     {
-        //if (mPlayActor)  mPlayActor->update(delta);
+        if (mPlayActor)  mPlayActor->update(delta);
 
         timeval timeout = {0, 0};
         if (TcpClient::get() && TcpClient::get()->Select(timeout))
@@ -413,7 +413,6 @@ void MainScene::Decording()
         memcpy(&data, TcpClient::get()->mRecvBuf + Idx, sizeof(PK_Data));
         Idx += sizeof(PK_Data);
 
-
         switch (data.action)
         {
         case 'c':
@@ -442,6 +441,18 @@ void MainScene::Decording()
             {
                 if (actor && actor->mID == data.clientID)
                     actor->sprite->setPosition(data.pos);
+            }
+        }
+        break;
+        case 't':
+        {
+            for (auto actor : mActorList)
+            {
+                if (actor && actor->mID == data.clientID)
+                {
+                    actor->mMoveComp->mTarget  = data.pos;
+                    actor->mMoveComp->IsMoving = true;
+                }
             }
         }
         break;

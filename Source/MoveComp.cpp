@@ -1,5 +1,5 @@
 #include "MoveComp.h"
-
+#include "TcpClient.h"
 MoveComp::MoveComp(Actor* actor)
 {
     mActor = actor;
@@ -20,8 +20,10 @@ void MoveComp::update(float delta)
     if (mTimer > 1.0f)
     {
         mTimer = 0;
+        printf("ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ\n");
         printf("엑터 위치 :: x : %f :: y : %f\n",
             mActor->sprite->getPosition().x,mActor->sprite->getPosition().y);
+        printf("ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ\n");
     }
 
     if (IsMoving)
@@ -37,8 +39,9 @@ void MoveComp::update(float delta)
 
 void MoveComp::SetTarget(ax::Vec2 target)
 {
-    mTarget = target - mActor->sprite->getPosition();
+    mTarget  = target;
     IsMoving = true;
+    TcpClient::get()->SendActorMessage(mActor, 't');
 }
 
 
@@ -50,8 +53,8 @@ bool MoveComp::IsArrive()
     ax::Vec2 target = mTarget;
 
     float m = length(mActor->sprite->getPosition(), mTarget);
-    printf("목적지와 현재위치와의 거리 : %f\n");
-    if (100.0 > m)
+    //printf("목적지와 현재위치와의 거리 : %f\n");
+    if (3.0 > m)
         return true;
     else
         return false;
@@ -89,5 +92,5 @@ void MoveComp::Do_Moving()
         IsMoving = false;
     }
     else
-        mVelocity += mSpeed * Vec2DNormalized(mTarget);
+        mVelocity += mSpeed * Vec2DNormalized(mTarget - mActor->sprite->getPosition());
 }

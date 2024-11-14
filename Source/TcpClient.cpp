@@ -4,6 +4,7 @@
 #include <conio.h>
 #include "Actor.h"
 #include "PrePacket.h"
+#include "MoveComp.h"
 
 #pragma comment(lib, "ws2_32")
 #pragma warning(disable : 4996)
@@ -84,10 +85,18 @@ bool TcpClient::SendActorMessage(void* data, char msg)
         Actor* actor = (Actor*)data;
         // 캐릭터 넘버
         data_info.charNum = actor->mCharNum;
-        // 캐릭터 위치
-        data_info.pos = actor->sprite->getPosition();
         // 어떤 행동인지
         data_info.action = msg;
+        if (msg == 't')
+        {
+            data_info.pos = actor->mMoveComp->mTarget;
+            
+        }
+        else
+        {
+            // 캐릭터 위치
+            data_info.pos = actor->sprite->getPosition();
+        }
         // 어떤 클라에 적용할건지
         data_info.clientID = ID;  
     }
@@ -101,7 +110,7 @@ bool TcpClient::SendActorMessage(void* data, char msg)
     if (r == SOCKET_ERROR)
         return false;
 
-    printf("Send Pos....\n");
+    printf("Send Pos....%c\n",msg);
     return true;
 }
 

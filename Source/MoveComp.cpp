@@ -41,7 +41,6 @@ void MoveComp::SetTarget(ax::Vec2 target)
 {
     mTarget  = target;
     IsMoving = true;
-    TcpClient::get()->SendActorMessage(mActor, 't');
 }
 
 

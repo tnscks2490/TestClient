@@ -186,7 +186,10 @@ void MainScene::onMouseDown(Event* event)
     ax::Vec2 mousePos = ax::Vec2(e->getCursorX(), e->getCursorY());
     printf("x : %f :: y : %f\n", mousePos.x, mousePos.y);
     if (mPlayActor)
+    {
         mPlayActor->mMoveComp->SetTarget(mousePos);
+        TcpClient::get()->SendActorMessage(mPlayActor, 't');
+    }
     
 }
 
@@ -275,7 +278,11 @@ void MainScene::update(float delta)
 
     case GameState::update:
     {
-        if (mPlayActor)  mPlayActor->update(delta);
+        for (auto actor : mActorList)
+        {
+            if (actor && actor->mMoveComp)
+                actor->update(delta);
+        }
 
         timeval timeout = {0, 0};
         if (TcpClient::get() && TcpClient::get()->Select(timeout))
@@ -413,6 +420,10 @@ void MainScene::Decording()
         memcpy(&data, TcpClient::get()->mRecvBuf + Idx, sizeof(PK_Data));
         Idx += sizeof(PK_Data);
 
+       /* if (data.clientID == TcpClient::get()->GetID())
+            continue;*/
+
+
         switch (data.action)
         {
         case 'c':
@@ -450,8 +461,7 @@ void MainScene::Decording()
             {
                 if (actor && actor->mID == data.clientID)
                 {
-                    actor->mMoveComp->mTarget  = data.pos;
-                    actor->mMoveComp->IsMoving = true;
+                    actor->mMoveComp->SetTarget(data.pos);
                 }
             }
         }

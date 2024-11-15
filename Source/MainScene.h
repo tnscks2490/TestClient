@@ -70,7 +70,6 @@ public:
     void SelectPlayActor(int charNum);
     Actor* CreateActor(PK_Data data);
 
-
     void Decording();
 
 
@@ -84,7 +83,7 @@ private:
     // 서버와 연동을 위한 클라이언트
 
     ActorList mActorList;
-
+    ActorList mPJList;
     // 실제 플레이 캐릭터
     Actor* mPlayActor = nullptr;
     int mPlayerNum    = 0;

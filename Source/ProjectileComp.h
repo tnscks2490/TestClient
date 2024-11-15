@@ -19,4 +19,5 @@ public:
 
     float mTimer = 0.f;
     Actor* mActor;
+    Actor* mArcher;
 };

@@ -8,7 +8,7 @@ class ProjectileComp;
 class Actor
 {
 public:
-    Actor() {}
+    Actor();
     ~Actor();
 
     void update(float delta);

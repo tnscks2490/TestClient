@@ -3,6 +3,10 @@
 #include "MoveComp.h"
 #include "ProjectileComp.h"
 
+Actor::Actor()
+{
+}
+
 Actor::~Actor()
 {
     //sprite->removeFromParent();
@@ -14,6 +18,7 @@ Actor::~Actor()
 
 void Actor::update(float delta)
 {
+    if (mPJComp)  mPJComp->update(delta);
     if (mMoveComp) mMoveComp->update(delta);
-    if (mPJComp) mPJComp->update(delta);
 }
+

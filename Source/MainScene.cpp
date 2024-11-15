@@ -316,7 +316,12 @@ void MainScene::update(float delta)
         // 받아온 데이터를 토대로 함수 실행
         for (auto actor : mActorList)
         {
-            if (actor && actor->mMoveComp)
+            if (actor)
+                actor->update(delta);
+        }
+        for (auto actor : mPJList)
+        {
+            if (actor)
                 actor->update(delta);
         }
 
@@ -398,9 +403,10 @@ Actor* MainScene::CreateActor(PK_Data data)
     std::string_view name;
     switch (data.input)
     {
-        case 77: name = "Angel.png"sv;       break;
-        case 78: name = "Dark_Angel.png"sv;  break;
-        case 79: name = "Farmer.png"sv;      break;
+        case 77:    name = "Angel.png"sv;       break;
+        case 78:    name = "Dark_Angel.png"sv;  break;
+        case 79:    name = "Farmer.png"sv;      break;
+        case 108:   name = "Projectile.png"sv;  break;
         default: break;
     }
 
@@ -411,8 +417,30 @@ Actor* MainScene::CreateActor(PK_Data data)
     actor->charNum = data.input;
     auto move  = new MoveComp(actor);
 
-    mActorList.push_back(actor);
-    this->addChild(actor->sprite,0);
+    
+
+
+    if (data.input == 108)
+    {
+        Actor* mArc;
+        for (auto archer : mActorList)
+        {
+            if (archer && archer->mID == data.ClientID)
+                mArc = archer;
+        }
+        actor->sprite->setPosition(mArc->sprite->getPosition());
+        auto proj = new ProjectileComp(actor);
+        proj->mArcher = mArc;
+        mPJList.push_back(actor);
+        
+    }
+    else
+    {
+        mActorList.push_back(actor);
+    }
+
+        this->addChild(actor->sprite, 0);
+    
 
     return actor;
 }
@@ -464,18 +492,21 @@ void MainScene::Decording()
             for (auto actor : mActorList)
             {
                 if (actor && actor->mID == data.ClientID)
-                    actor->mMoveComp->SetTarget(data.pos);
+                {
+                    Actor* pro = CreateActor(data);
+                    pro->mMoveComp->SetTarget(data.pos);
+                }
             }
         }
         break;
-        case 114:
+        case 114: 
             for (auto actor : mActorList)
             {
                 if (actor && actor->mID == data.ClientID)
                     actor->mMoveComp->SetTarget(data.pos);
             }
-            break;
-
+        break;
+        ///////////////////////
         default: break;
         }
     } 

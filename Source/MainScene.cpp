@@ -27,6 +27,7 @@
 #include "TcpClient.h"
 #include "Actor.h"
 #include "MoveComp.h"
+#include "ProjectileComp.h"
 #include "PrePacket.h"
 
 using namespace ax;
@@ -185,12 +186,32 @@ void MainScene::onMouseDown(Event* event)
 
     ax::Vec2 mousePos = ax::Vec2(e->getCursorX(), e->getCursorY());
     printf("x : %f :: y : %f\n", mousePos.x, mousePos.y);
-    
-    if (mPlayActor)
+
+
+    if (e->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT)
     {
-        mPlayActor->mMoveComp->SetTarget(mousePos);
-        TcpClient::get()->SendActorMessage(mPlayActor, 't');
+        if (mPlayActor)
+        {
+            PK_Data data;
+            data.ClientID = TcpClient::get()->GetID();
+            data.input    = 'r';
+            data.pos      = mousePos;
+            TcpClient::get()->SendActorMessage(data);
+        }
     }
+    else if (e->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT)
+    {
+        if (mPlayActor)
+        {
+            PK_Data data;
+            data.ClientID = TcpClient::get()->GetID();
+            data.input    = 'l';
+            data.pos      = mousePos;
+            TcpClient::get()->SendActorMessage(data);
+        }
+    }
+
+    
     
 }
 
@@ -214,31 +235,35 @@ void MainScene::onMouseScroll(Event* event)
 
 void MainScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
 {
+   
     if (mPlayActor == nullptr)
     {
+        PK_Data data;
+        data.ClientID = TcpClient::get()->GetID();
+        data.pos      = Vec2(500, 500);
+
+
         switch (code)
         {
         case ax::EventKeyboard::KeyCode::KEY_1:
-            SelectPlayActor(1);
-            AXLOG("현재 플레이 하고있는 캐릭터는 천사입니다.");
+            data.input = 77;  
+            TcpClient::get()->SendActorMessage(data);
             break;
         case ax::EventKeyboard::KeyCode::KEY_2:
-            SelectPlayActor(2);
-            AXLOG("현재 플레이 하고있는 캐릭터는 악마입니다.");
+            data.input = 78;
+            TcpClient::get()->SendActorMessage(data);
             break;
-        case ax::EventKeyboard::KeyCode::KEY_3: 
-            SelectPlayActor(3);
-            AXLOG("현재 플레이 하고있는 캐릭터는 인간입니다.");
+        case ax::EventKeyboard::KeyCode::KEY_3:
+            data.input = 79;
+            TcpClient::get()->SendActorMessage(data);
             break;
         default:
             AXLOG("범위를 벗어납니다. 다시 선택해주세요");
             break;
         }
     }
-    else
-    {
-
-        Vec2 pos = mPlayActor->sprite->getPosition();
+    
+        /*Vec2 pos = mPlayActor->sprite->getPosition();
         switch (code)
         {
         case ax::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
@@ -258,8 +283,7 @@ void MainScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
         }
 
         mPlayActor->sprite->setPosition(pos);
-        TcpClient::get()->SendActorMessage(mPlayActor, 'm');
-    }
+        TcpClient::get()->SendActorMessage(mPlayActor, 'm');*/
 }
 
 void MainScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
@@ -283,13 +307,10 @@ void MainScene::update(float delta)
         timeval timeout = {0, 0};
         if (TcpClient::get() && TcpClient::get()->Select(timeout))
         {
-            if (mPlayActor)
+            if (TcpClient::get()->RecvData())
             {
-                if (TcpClient::get()->RecvData())
-                {
-                    Decording();
-                }
-            }
+                Decording();
+            }      
         }
 
         // 받아온 데이터를 토대로 함수 실행
@@ -342,7 +363,7 @@ void MainScene::update(float delta)
 
 void MainScene::menuCloseCallback(ax::Object* sender)
 {
-    TcpClient::get()->SendActorMessage(nullptr, 'd');
+    //TcpClient::get()->SendActorMessage(nullptr, 'd');
     // Close the axmol game scene and quit the application
     _director->end();
 
@@ -356,15 +377,15 @@ void MainScene::menuCloseCallback(ax::Object* sender)
 
 void MainScene::SelectPlayActor(int charNum)
 {
-    Actor* actor = CreateActor(charNum, TcpClient::get()->GetID());
+    //Actor* actor = CreateActor(charNum, TcpClient::get()->GetID());
 
-    mPlayActor = actor;
+    /*mPlayActor = actor;
     mActorList.push_back(actor);
-    this->addChild(actor->sprite, 0);
+    this->addChild(actor->sprite, 0);*/
 
 
 
-    TcpClient::get()->SendActorMessage(actor, 'c');
+    //TcpClient::get()->SendActorMessage(actor, 'c');
 
     // 캐릭터 선택창 비활성화
     mAngel->setVisible(false);
@@ -372,26 +393,28 @@ void MainScene::SelectPlayActor(int charNum)
     mFarmer->setVisible(false);
 }
 
-Actor* MainScene::CreateActor(int charNum, int id)
+Actor* MainScene::CreateActor(PK_Data data)
 {
     std::string_view name;
-    switch (charNum)
+    switch (data.input)
     {
-    case 1: name = "Angel.png"sv;       break;
-    case 2: name = "Dark_Angel.png"sv;  break;
-    case 3: name = "Farmer.png"sv;      break;
-    default:
-        break;
+        case 77: name = "Angel.png"sv;       break;
+        case 78: name = "Dark_Angel.png"sv;  break;
+        case 79: name = "Farmer.png"sv;      break;
+        default: break;
     }
-    Actor* actor = new Actor();
-    actor->sprite = Sprite::create(name);
-    actor->mCharNum = charNum;
-    actor->sprite->setPosition(500, 400);
-    actor->mID = id;
+
+    Actor* actor    = new Actor();
+    actor->sprite   = Sprite::create(name);
+    actor->sprite->setPosition(data.pos);
+    actor->mID = data.ClientID;
+    actor->charNum = data.input;
     auto move  = new MoveComp(actor);
+
+    mActorList.push_back(actor);
+    this->addChild(actor->sprite,0);
+
     return actor;
-
-
 }
 
 void MainScene::Decording()
@@ -406,7 +429,6 @@ void MainScene::Decording()
 
         PK_Head haed;
         PK_Data data;
-
 
         memcpy(&haed, TcpClient::get()->mRecvBuf + Idx, sizeof(PK_Head));
         Idx += sizeof(PK_Head);
@@ -424,66 +446,38 @@ void MainScene::Decording()
         memcpy(&data, TcpClient::get()->mRecvBuf + Idx, sizeof(PK_Data));
         Idx += sizeof(PK_Data);
 
-       /* if (data.clientID == TcpClient::get()->GetID())
-            continue;*/
-
-
-        switch (data.action)
+        switch (data.input)
         {
-        case 'c':
+        case 77:
+        case 78:
+        case 79:
         {
-            bool check = false;
-            for (auto actor : mActorList)
+            Actor* actor = CreateActor(data);
+            if (mPlayActor == nullptr && data.ClientID == TcpClient::get()->GetID())
             {
-                if (actor && actor->mID == data.clientID)
-                {
-                    check = true;
-                    break;
-                }
-            }
-            if (!check)
-            {
-                Actor* actor = CreateActor(data.charNum, data.clientID);
-                mActorList.push_back(actor);
-                this->addChild(actor->sprite, 0);
-                TcpClient::get()->SendActorMessage(mPlayActor, 'c');
+                mPlayActor = actor;
             }
         }
         break;
-        case 'm':
+        case 108:
         {
             for (auto actor : mActorList)
             {
-                if (actor && actor->mID == data.clientID)
-                    actor->sprite->setPosition(data.pos);
-            }
-        }
-        break;
-        case 't':
-        {
-            for (auto actor : mActorList)
-            {
-                if (actor && actor->mID == data.clientID)
-                {
+                if (actor && actor->mID == data.ClientID)
                     actor->mMoveComp->SetTarget(data.pos);
-                }
             }
         }
         break;
-        case 'd':
-        {
+        case 114:
             for (auto actor : mActorList)
             {
-                if (actor && actor->mID == data.clientID)
-                {
-                    actor->sprite->removeFromParent();
-                    actor = nullptr;
-                }
+                if (actor && actor->mID == data.ClientID)
+                    actor->mMoveComp->SetTarget(data.pos);
             }
+            break;
+
+        default: break;
         }
-        break;
-        }
-        
     } 
 }
 

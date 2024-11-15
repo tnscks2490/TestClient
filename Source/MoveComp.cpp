@@ -1,5 +1,6 @@
 #include "MoveComp.h"
 #include "TcpClient.h"
+
 MoveComp::MoveComp(Actor* actor)
 {
     mActor = actor;

@@ -18,7 +18,7 @@ public:
     static TcpClient* get();
 
 
-    bool SendActorMessage(void* data,char msg);
+    bool SendActorMessage(PK_Data data);
     bool RecvData();
     bool Select(struct timeval timeout);
 

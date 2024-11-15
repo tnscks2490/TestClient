@@ -5,22 +5,27 @@
 
 #pragma pack(push,1)
 
+struct PK_Head
+{
+    char UniqueID          = 12;
+    unsigned short dataLen = 0;
+};
+
 
 struct PK_Data
 {
-    char action  = 0;
-    short clientID = -1;
-    short charNum  = -1;
+    short ClientID = -1;
+    char input  = 0;
     ax::Vec2 pos;
 };
 
 
-struct PK_Head
-{
-    char UniqueID          = 12;
-    unsigned short dataLen = sizeof(PK_Data);
-};
 
 
+//    1 : 77
+//    2 : 78
+//    3 : 79
+//    R : 141
+//    L : 135
 
 #pragma pack(pop)

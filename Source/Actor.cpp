@@ -5,7 +5,11 @@
 
 Actor::~Actor()
 {
-    TcpClient::get()->SendActorMessage(this, 'd');
+    //sprite->removeFromParent();
+    //delete mMoveComp;
+    //delete mPJComp;
+
+    //TcpClient::get()->SendActorMessage(this, 'd');
 }
 
 void Actor::update(float delta)

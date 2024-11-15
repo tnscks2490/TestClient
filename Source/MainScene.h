@@ -25,7 +25,7 @@
 
 #pragma once
 #include "axmol.h"
-
+#include "PrePacket.h"
 class Actor;
 
 
@@ -68,10 +68,13 @@ public:
 
 
     void SelectPlayActor(int charNum);
-    Actor* CreateActor(int charNum, int id);
+    Actor* CreateActor(PK_Data data);
 
 
     void Decording();
+
+
+
 
    
 

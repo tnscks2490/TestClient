@@ -56,61 +56,35 @@ TcpClient* TcpClient::get()
 {
     if (!g)
     {
-        g = new TcpClient("192.168.1.105", 20202);
+        g = new TcpClient("172.30.1.26", 20202);
         //"172.30.1.26" 학원 IP
         //"192.168.1.105" 집 IP
     }
     return g;
 }
 
-bool TcpClient::SendActorMessage(void* data, char msg)
+
+
+bool TcpClient::SendActorMessage(PK_Data data)
 {
     char buf[1024] = {0};
-    int bufLen    = 0;
+    int bufLen     = 0;
 
+    PK_Head head;
+    head.dataLen = sizeof(PK_Data);
 
-    // 고유아이디:: 서버를 사용하는 사람끼리 안겹치게
-
-    PK_Head pk_Head;
-    memcpy(buf + bufLen, &pk_Head, sizeof(PK_Head));
+    memcpy(buf + bufLen, &head, sizeof(PK_Head));
     bufLen += sizeof(PK_Head);
 
-    // 구조체의 크기로 데이터 길이는 고정으로 선언
-    PK_Data data_info;
-
-
-    //데이터 받아오기
-    if (data != nullptr)
-    {
-        Actor* actor = (Actor*)data;
-        // 캐릭터 넘버
-        data_info.charNum = actor->mCharNum;
-        // 어떤 행동인지
-        data_info.action = msg;
-        if (msg == 't')
-        {
-            data_info.pos = actor->mMoveComp->mTarget;
-            
-        }
-        else
-        {
-            // 캐릭터 위치
-            data_info.pos = actor->sprite->getPosition();
-        }
-        // 어떤 클라에 적용할건지
-        data_info.clientID = ID;  
-    }
- 
-    memcpy(buf + bufLen, &data_info, sizeof(PK_Data));
+    memcpy(buf + bufLen, &data, sizeof(PK_Data));
     bufLen += sizeof(PK_Data);
-
 
     // 보내기
     int r = send(mSocket, buf, bufLen, 0);
     if (r == SOCKET_ERROR)
         return false;
 
-    printf("Send Pos....%c\n",msg);
+    printf("Send Pos....\n");
     return true;
 }
 
@@ -136,12 +110,9 @@ bool TcpClient::RecvData()
             memcpy(&data, mSaveBuf + SaveIdx, sizeof(PK_Data));
             len += sizeof(PK_Data);
 
-            
-
 
             if (head.UniqueID != 12)
             {
-
                 CleanSaveBuf(SaveIdx, len);
                 SaveIdx += sizeof(PK_Head) + head.dataLen;
                 if (sizeof(PK_Head) + head.dataLen > LastIdx || LastIdx == 0)

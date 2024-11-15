@@ -1,6 +1,7 @@
 #include "Actor.h"
-#include "MoveComp.h"
 #include "TcpClient.h"
+#include "MoveComp.h"
+#include "ProjectileComp.h"
 
 Actor::~Actor()
 {
@@ -10,4 +11,5 @@ Actor::~Actor()
 void Actor::update(float delta)
 {
     if (mMoveComp) mMoveComp->update(delta);
+    if (mPJComp) mPJComp->update(delta);
 }

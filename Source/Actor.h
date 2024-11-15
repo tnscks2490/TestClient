@@ -2,6 +2,8 @@
 #include "axmol.h"
 
 class MoveComp;
+class ProjectileComp;
+
 
 class Actor
 {
@@ -18,6 +20,6 @@ public:
 public:
     //컴포넌트 모임
     MoveComp* mMoveComp = nullptr;
-
+    ProjectileComp* mPJComp = nullptr;
 };
 

@@ -185,6 +185,7 @@ void MainScene::onMouseDown(Event* event)
 
     ax::Vec2 mousePos = ax::Vec2(e->getCursorX(), e->getCursorY());
     printf("x : %f :: y : %f\n", mousePos.x, mousePos.y);
+    
     if (mPlayActor)
     {
         mPlayActor->mMoveComp->SetTarget(mousePos);
@@ -278,12 +279,7 @@ void MainScene::update(float delta)
 
     case GameState::update:
     {
-        for (auto actor : mActorList)
-        {
-            if (actor && actor->mMoveComp)
-                actor->update(delta);
-        }
-
+        // 데이터를 받아오기
         timeval timeout = {0, 0};
         if (TcpClient::get() && TcpClient::get()->Select(timeout))
         {
@@ -294,7 +290,15 @@ void MainScene::update(float delta)
                     Decording();
                 }
             }
-        }break;
+        }
+
+        // 받아온 데이터를 토대로 함수 실행
+        for (auto actor : mActorList)
+        {
+            if (actor && actor->mMoveComp)
+                actor->update(delta);
+        }
+
     }
 
     case GameState::pause:

@@ -4,8 +4,7 @@ MoveComp::MoveComp(Actor* actor)
 {
     mActor = actor;
     mActor->mMoveComp = this;
-    IsMoving          = false;
-    
+    IsMoving          = false;   
 }
 
 MoveComp::~MoveComp() {}

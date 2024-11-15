@@ -480,10 +480,34 @@ void MainScene::Decording()
         case 78:
         case 79:
         {
-            Actor* actor = CreateActor(data);
+            
             if (mPlayActor == nullptr && data.ClientID == TcpClient::get()->GetID())
             {
+                Actor* actor = CreateActor(data);
                 mPlayActor = actor;
+               
+            }
+            if (mPlayActor)
+            {
+                bool check = false;
+                for (auto actor : mActorList)
+                {
+                    if (actor && actor->mID == data.ClientID)
+                    {
+                        check = true;
+                    }
+                }
+                if (!check)
+                {
+                    Actor* actor = CreateActor(data);
+                    PK_Data d;
+                    d.ClientID = TcpClient::get()->GetID();
+                    d.input    = mPlayActor->charNum;
+                    d.pos      = mPlayActor->sprite->getPosition();
+                    TcpClient::get()->SendActorMessage(d);
+                }
+
+                
             }
         }
         break;

@@ -63,6 +63,12 @@ public:
     void onKeyPressed(ax::EventKeyboard::KeyCode code, ax::Event* event);
     void onKeyReleased(ax::EventKeyboard::KeyCode code, ax::Event* event);
 
+
+    // PhysicsWorld
+
+    bool onContactBegin(ax::PhysicsContact& contact);
+    bool onContactSeparate(ax::PhysicsContact& contact);
+
     // a selector callback
     void menuCloseCallback(ax::Object* sender);
 
@@ -87,6 +93,9 @@ private:
     // 실제 플레이 캐릭터
     Actor* mPlayActor = nullptr;
     int mPlayerNum    = 0;
+
+
+    ax::PhysicsWorld* mPhysicsWorld = nullptr;
 
     // 캐릭터 선택 견본
     // 선택후 전부 인비져블할 예정

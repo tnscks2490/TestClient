@@ -91,7 +91,7 @@ bool MainScene::init()
 
     /////////////////////////////
     // 3. add your codes below...
-
+    mPhysicsWorld = getPhysicsWorld();
     // Some templates (uncomment what you  need)
     auto touchListener = EventListenerTouchAllAtOnce::create();
     touchListener->onTouchesBegan = AX_CALLBACK_2(MainScene::onTouchesBegan, this);
@@ -108,8 +108,15 @@ bool MainScene::init()
     keyboardListener->onKeyReleased = AX_CALLBACK_2(MainScene::onKeyReleased, this);
     _eventDispatcher->addEventListenerWithFixedPriority(keyboardListener, 11);
 
+    auto contactListener               = EventListenerPhysicsContact::create();
+    contactListener->onContactBegin    = AX_CALLBACK_1(MainScene::onContactBegin, this);
+    contactListener->onContactSeparate = AX_CALLBACK_1(MainScene::onContactSeparate, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 
 
+
+
+    
     // add a label shows "Hello World"
     // create and initialize a label
 
@@ -263,27 +270,6 @@ void MainScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
         }
     }
     
-        /*Vec2 pos = mPlayActor->sprite->getPosition();
-        switch (code)
-        {
-        case ax::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-            pos.x = pos.x - 5;
-            break;
-        case ax::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-            pos.x = pos.x + 5;
-            break;
-        case ax::EventKeyboard::KeyCode::KEY_UP_ARROW:
-            pos.y = pos.y + 5;
-            break;
-        case ax::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-            pos.y = pos.y - 5;
-            break;
-        default:
-            break;
-        }
-
-        mPlayActor->sprite->setPosition(pos);
-        TcpClient::get()->SendActorMessage(mPlayActor, 'm');*/
 }
 
 void MainScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
@@ -366,6 +352,16 @@ void MainScene::update(float delta)
 }
 
 
+bool MainScene::onContactBegin(ax::PhysicsContact& contact)
+{
+    return true;
+}
+
+bool MainScene::onContactSeparate(ax::PhysicsContact& contact)
+{
+    return true;
+}
+
 void MainScene::menuCloseCallback(ax::Object* sender)
 {
     //TcpClient::get()->SendActorMessage(nullptr, 'd');
@@ -415,10 +411,22 @@ Actor* MainScene::CreateActor(PK_Data data)
     actor->sprite->setPosition(data.pos);
     actor->mID = data.ClientID;
     actor->charNum = data.input;
+
+    ax::Vec2 bodysize(32,32);
+
+    auto body = ax::PhysicsBody::createBox(bodysize);
+    body->setContactTestBitmask(0xFFFFFFFF);
+    body->setDynamic(false);
+    actor->sprite->setPhysicsBody(body);
+
+    auto drawNode = ax::DrawNode::create();
+    drawNode->setPosition(Vec2(0, 0));
+    drawNode->drawRect(Vec2(-16, -16), Vec2(16, 16), ax::Color4F::RED);
+    actor->sprite->addChild(drawNode);
+
+
+
     auto move  = new MoveComp(actor);
-
-    
-
 
     if (data.input == 108)
     {

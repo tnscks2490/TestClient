@@ -55,6 +55,10 @@ bool MainScene::init()
     {
         return false;
     }
+    if (!Scene::initPhysicsWorld())
+    {
+        return false;
+    }
 
     auto visibleSize = _director->getVisibleSize();
     auto origin = _director->getVisibleOrigin();
@@ -91,7 +95,12 @@ bool MainScene::init()
 
     /////////////////////////////
     // 3. add your codes below...
-    mPhysicsWorld = getPhysicsWorld();
+
+    // 피직스월드 작성하기
+
+
+
+
     // Some templates (uncomment what you  need)
     auto touchListener = EventListenerTouchAllAtOnce::create();
     touchListener->onTouchesBegan = AX_CALLBACK_2(MainScene::onTouchesBegan, this);
@@ -114,9 +123,11 @@ bool MainScene::init()
     _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 
 
+    mPhysicsWorld = getPhysicsWorld();
+    //mPhysicsWorld->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL );
+    getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 
 
-    
     // add a label shows "Hello World"
     // create and initialize a label
 
@@ -149,11 +160,11 @@ bool MainScene::init()
     this->addChild(mFarmer, 0);
 
 
-    auto drawNode = DrawNode::create();
+   /* auto drawNode = DrawNode::create();
     drawNode->setPosition(Vec2(0, 0));
     addChild(drawNode);
 
-    drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4B::BLUE);
+    drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4B::BLUE);*/
 
 
     // scheduleUpdate() is required to ensure update(float) is called on every loop
@@ -242,7 +253,10 @@ void MainScene::onMouseScroll(Event* event)
 
 void MainScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
 {
-   
+    if (code == ax::EventKeyboard::KeyCode::KEY_P)
+        getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+
+
     if (mPlayActor == nullptr)
     {
         PK_Data data;
@@ -274,7 +288,8 @@ void MainScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
 
 void MainScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
 {
-    AXLOG("onKeyReleased, keycode: %d", static_cast<int>(code));
+    if (code == ax::EventKeyboard::KeyCode::KEY_P)
+        getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_NONE);
 }
 
 void MainScene::update(float delta)
@@ -305,6 +320,7 @@ void MainScene::update(float delta)
             if (actor)
                 actor->update(delta);
         }
+
         for (auto actor : mPJList)
         {
             if (actor)
@@ -354,11 +370,13 @@ void MainScene::update(float delta)
 
 bool MainScene::onContactBegin(ax::PhysicsContact& contact)
 {
+    printf("충돌났음\n");
     return true;
 }
 
 bool MainScene::onContactSeparate(ax::PhysicsContact& contact)
 {
+    printf("충돌해제\n");
     return true;
 }
 
@@ -409,6 +427,12 @@ Actor* MainScene::CreateActor(PK_Data data)
     Actor* actor    = new Actor();
     actor->sprite   = Sprite::create(name);
     actor->sprite->setPosition(data.pos);
+
+
+    ax::Vec2 anchor(1,1);
+    //anchor = actor->sprite->getAnchorPoint();
+    actor->sprite->setAnchorPoint(anchor);
+
     actor->mID = data.ClientID;
     actor->charNum = data.input;
 
@@ -420,9 +444,8 @@ Actor* MainScene::CreateActor(PK_Data data)
     actor->sprite->setPhysicsBody(body);
 
     auto drawNode = ax::DrawNode::create();
-    drawNode->setPosition(Vec2(0, 0));
-    drawNode->drawRect(Vec2(-16, -16), Vec2(16, 16), ax::Color4F::RED);
-    actor->sprite->addChild(drawNode);
+    drawNode->drawRect(Vec2(0, 0), Vec2(64, 64), ax::Color4F::BLUE);
+    actor->sprite->addChild(drawNode,0);
 
 
 
@@ -447,7 +470,7 @@ Actor* MainScene::CreateActor(PK_Data data)
         mActorList.push_back(actor);
     }
 
-        this->addChild(actor->sprite, 0);
+    this->addChild(actor->sprite, 0);
     
 
     return actor;

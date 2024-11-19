@@ -20,10 +20,6 @@ void MoveComp::update(float delta)
     if (mTimer > 1.0f)
     {
         mTimer = 0;
-        printf("ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ\n");
-        printf("엑터 위치 :: x : %f :: y : %f\n",
-            mActor->sprite->getPosition().x,mActor->sprite->getPosition().y);
-        printf("ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ\n");
     }
 
     if (IsMoving)

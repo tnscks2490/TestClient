@@ -56,7 +56,7 @@ TcpClient* TcpClient::get()
 {
     if (!g)
     {
-        g = new TcpClient("192.168.1.105", 20202);
+        g = new TcpClient("172.30.1.26", 20202);
         //"172.30.1.26" 학원 IP
         //"192.168.1.105" 집 IP
     }
@@ -100,16 +100,11 @@ bool TcpClient::RecvData()
     {
         while (check)
         {
-            int len       = 0;
+            int len = 0;
 
             PK_Head head;
             memcpy(&head.UniqueID, mSaveBuf + SaveIdx, sizeof(head.UniqueID));
             len += sizeof(PK_Head);
-
-            PK_Data data;
-            memcpy(&data, mSaveBuf + SaveIdx, sizeof(PK_Data));
-            len += sizeof(PK_Data);
-
 
             if (head.UniqueID != 12)
             {
@@ -120,6 +115,9 @@ bool TcpClient::RecvData()
                 continue;
             }
 
+            PK_Data data;
+            memcpy(&data, mSaveBuf + SaveIdx, sizeof(PK_Data));
+            len += sizeof(PK_Data);
 
             if (sizeof(PK_Head) + head.dataLen > LastIdx || LastIdx == 0)
                 check = false;

@@ -26,9 +26,9 @@ void MoveComp::update(float delta)
     {
         Do_Moving();
         mVelocity.normalize();
-        ax::Vec2 pos = mActor->sprite->getPosition();
+        ax::Vec2 pos = mActor->mRoot->getPosition();
         pos += mVelocity * delta * mSpeed;
-        mActor->sprite->setPosition(pos);
+        mActor->mRoot->setPosition(pos);
     }
     
 }
@@ -44,10 +44,10 @@ void MoveComp::SetTarget(ax::Vec2 target)
 // 현재위치와 목표위치를 비교 후 도착 여부 판별
 bool MoveComp::IsArrive()
 {
-    ax::Vec2 mypos = mActor->sprite->getPosition();
+    ax::Vec2 mypos = mActor->mRoot->getPosition();
     ax::Vec2 target = mTarget;
 
-    float m = length(mActor->sprite->getPosition(), mTarget);
+    float m = length(mActor->mRoot->getPosition(), mTarget);
     //printf("목적지와 현재위치와의 거리 : %f\n");
     if (3.0 > m)
         return true;
@@ -87,5 +87,5 @@ void MoveComp::Do_Moving()
         IsMoving = false;
     }
     else
-        mVelocity += mSpeed * Vec2DNormalized(mTarget - mActor->sprite->getPosition());
+        mVelocity += mSpeed * Vec2DNormalized(mTarget - mActor->mRoot->getPosition());
 }

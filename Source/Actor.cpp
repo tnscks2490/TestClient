@@ -5,10 +5,14 @@
 
 Actor::Actor()
 {
+    mRoot = ax::Node::create();
+    mRoot->retain();
 }
 
 Actor::~Actor()
 {
+    if (mRoot)
+        mRoot->release();
     //sprite->removeFromParent();
     //delete mMoveComp;
     //delete mPJComp;
@@ -20,5 +24,10 @@ void Actor::update(float delta)
 {
     if (mPJComp)  mPJComp->update(delta);
     if (mMoveComp) mMoveComp->update(delta);
+}
+
+void Actor::AddChild(ax::Node* node)
+{
+    mRoot->addChild(node);
 }
 

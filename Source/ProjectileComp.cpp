@@ -27,7 +27,7 @@ void ProjectileComp::update(float delta)
     {
         mTimer = 0.f;
 
-        mActor->sprite->setVisible(false);
+        //mActor->sprite->setVisible(false);
         //delete mActor;
     }
 }

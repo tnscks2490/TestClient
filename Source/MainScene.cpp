@@ -99,8 +99,6 @@ bool MainScene::init()
     // 피직스월드 작성하기
 
 
-
-
     // Some templates (uncomment what you  need)
     auto touchListener = EventListenerTouchAllAtOnce::create();
     touchListener->onTouchesBegan = AX_CALLBACK_2(MainScene::onTouchesBegan, this);
@@ -149,15 +147,15 @@ bool MainScene::init()
 
     mAngel = Sprite::create("Angel.png"sv);
     mAngel->setPosition(300, 100);
-    this->addChild(mAngel, 0);
+    this->addChild(mAngel);
 
     mDarkAngel = Sprite::create("Dark_Angel.png"sv);
     mDarkAngel->setPosition(600, 100);
-    this->addChild(mDarkAngel, 0);
+    this->addChild(mDarkAngel);
 
     mFarmer = Sprite::create("Farmer.png"sv);
     mFarmer->setPosition(900, 100);
-    this->addChild(mFarmer, 0);
+    this->addChild(mFarmer);
 
 
    /* auto drawNode = DrawNode::create();
@@ -425,27 +423,38 @@ Actor* MainScene::CreateActor(PK_Data data)
     }
 
     Actor* actor    = new Actor();
-    actor->sprite   = Sprite::create(name);
-    actor->sprite->setPosition(data.pos);
+    this->addChild(actor->mRoot);
+    actor->mRoot->setPosition(data.pos);
+
+    actor->sprite = Sprite::create(name);
+    actor->AddChild(actor->sprite);
 
 
-    ax::Vec2 anchor(1,1);
-    //anchor = actor->sprite->getAnchorPoint();
-    actor->sprite->setAnchorPoint(anchor);
-
-    actor->mID = data.ClientID;
+    actor->mID     = data.ClientID;
     actor->charNum = data.input;
+
+    //ax::Vec2 anchor(1,1);
+    //anchor = actor->sprite->getAnchorPoint();
+    //actor->sprite->setAnchorPoint(anchor);
+
+   auto bodyNode = ax::Node::create();
 
     ax::Vec2 bodysize(32,32);
 
     auto body = ax::PhysicsBody::createBox(bodysize);
     body->setContactTestBitmask(0xFFFFFFFF);
-    body->setDynamic(false);
-    actor->sprite->setPhysicsBody(body);
+    body->setDynamic(true);
+    bodyNode->setPhysicsBody(body);
+
+    actor->AddChild(bodyNode);
+
+    getPhysicsWorld()->setDebugDrawMask(ax::PhysicsWorld::DEBUGDRAW_ALL);
+
+
 
     auto drawNode = ax::DrawNode::create();
-    drawNode->drawRect(Vec2(0, 0), Vec2(64, 64), ax::Color4F::BLUE);
-    actor->sprite->addChild(drawNode,0);
+    drawNode->drawRect(Vec2(-16, -16), Vec2(16, 16), ax::Color4F::RED);
+    actor->AddChild(drawNode);
 
 
 
@@ -459,7 +468,7 @@ Actor* MainScene::CreateActor(PK_Data data)
             if (archer && archer->mID == data.ClientID)
                 mArc = archer;
         }
-        actor->sprite->setPosition(mArc->sprite->getPosition());
+        actor->mRoot->setPosition(mArc->mRoot->getPosition());
         auto proj = new ProjectileComp(actor);
         proj->mArcher = mArc;
         mPJList.push_back(actor);
@@ -469,10 +478,6 @@ Actor* MainScene::CreateActor(PK_Data data)
     {
         mActorList.push_back(actor);
     }
-
-    this->addChild(actor->sprite, 0);
-    
-
     return actor;
 }
 

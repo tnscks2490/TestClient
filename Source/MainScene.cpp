@@ -67,7 +67,11 @@ bool MainScene::init()
 
     TcpClient::get();
 
-    
+
+
+    auto bg = ax::Sprite::create("whiteBG.png"sv);
+    bg->setPosition(640, 360);
+    this->addChild(bg);
 
     /////////////////////////////
     // 2. add a menu item with "X" image, which is clicked to quit the program
@@ -125,8 +129,12 @@ bool MainScene::init()
     //mPhysicsWorld->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL );
     getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 
+    // TileMap Start
+    SetTileNodes();
+    OnOffTile();
 
-    // add a label shows "Hello World"
+
+
     // create and initialize a label
 
     auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
@@ -157,19 +165,38 @@ bool MainScene::init()
     mFarmer->setPosition(900, 100);
     this->addChild(mFarmer);
 
-
-   /* auto drawNode = DrawNode::create();
-    drawNode->setPosition(Vec2(0, 0));
-    addChild(drawNode);
-
-    drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4B::BLUE);*/
-
-
-    // scheduleUpdate() is required to ensure update(float) is called on every loop
     scheduleUpdate();
 
     return true;
 }
+
+
+void MainScene::SetTileNodes()
+{
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            ax::Node* node = ax::Node::create();
+            node->setPosition(8 + (j * 16), 8 + (i * 16));
+
+            auto drawNode = ax::DrawNode::create();
+            drawNode->drawRect(Vec2(-8, -8), Vec2(8, 8), ax::Color4F::RED);
+            node->addChild(drawNode);
+            mTileNodes.push_back(node);
+            addChild(node);
+        }
+    }
+}
+
+void MainScene::OnOffTile()
+{
+    for (auto tile : mTileNodes)
+    {
+        tile->setVisible(TileOn);
+    }
+}
+
 
 
 void MainScene::onTouchesBegan(const std::vector<ax::Touch*>& touches, ax::Event* event)
@@ -217,7 +244,7 @@ void MainScene::onMouseDown(Event* event)
     }
     else if (e->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT)
     {
-        if (mPlayActor)
+        if (mPlayActor && !TileOn)
         {
             PK_Data data;
             data.ClientID = TcpClient::get()->GetID();
@@ -225,10 +252,23 @@ void MainScene::onMouseDown(Event* event)
             data.pos      = mousePos;
             TcpClient::get()->SendActorMessage(data);
         }
-    }
+        if (TileOn)
+        {
+            int x = mousePos.x/16;
+            int y = mousePos.y / 16;
 
-    
-    
+            ax::Node* tile = mTileNodes[x * y];
+            tile->removeAllChildren();
+
+            auto drawNode = ax::DrawNode::create();
+
+            auto drawNode = ax::DrawNode::create();
+            drawNode->drawRect(Vec2(-8, -8), Vec2(8, 8), ax::Color4F::RED);
+            node->addChild(drawNode);
+
+
+        }
+    }
 }
 
 void MainScene::onMouseUp(Event* event)
@@ -254,6 +294,11 @@ void MainScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
     if (code == ax::EventKeyboard::KeyCode::KEY_P)
         getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 
+    if (code == ax::EventKeyboard::KeyCode::KEY_T)
+    {
+        TileOn = !TileOn;   
+        OnOffTile();
+    }
 
     if (mPlayActor == nullptr)
     {
@@ -267,27 +312,39 @@ void MainScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
         case ax::EventKeyboard::KeyCode::KEY_1:
             data.input = 77;  
             TcpClient::get()->SendActorMessage(data);
+            CloneSetVisible(false);
             break;
         case ax::EventKeyboard::KeyCode::KEY_2:
             data.input = 78;
             TcpClient::get()->SendActorMessage(data);
+            CloneSetVisible(false);
             break;
         case ax::EventKeyboard::KeyCode::KEY_3:
             data.input = 79;
             TcpClient::get()->SendActorMessage(data);
+            CloneSetVisible(false);
             break;
         default:
             AXLOG("범위를 벗어납니다. 다시 선택해주세요");
             break;
-        }
-    }
-    
+        }  
+    } 
 }
+
+void MainScene::CloneSetVisible(bool isvisible)
+{
+    mAngel->setVisible(isvisible);
+    mDarkAngel->setVisible(isvisible);
+    mFarmer->setVisible(isvisible);
+}
+
+
 
 void MainScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
 {
     if (code == ax::EventKeyboard::KeyCode::KEY_P)
         getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_NONE);
+
 }
 
 void MainScene::update(float delta)
@@ -319,10 +376,25 @@ void MainScene::update(float delta)
                 actor->update(delta);
         }
 
+
+
         for (auto actor : mPJList)
         {
             if (actor)
+            {
                 actor->update(delta);
+                
+            }
+            // 삭제하기 꼭 수정할것
+           /* if (actor->mRoot->isVisible() == false)
+            {
+                delete actor->mMoveComp;
+                delete actor->mPJComp;
+                actor->mRoot->removeFromParent();
+                actor = nullptr;
+            }*/
+
+
         }
 
     }
@@ -433,24 +505,14 @@ Actor* MainScene::CreateActor(PK_Data data)
     actor->mID     = data.ClientID;
     actor->charNum = data.input;
 
-    //ax::Vec2 anchor(1,1);
-    //anchor = actor->sprite->getAnchorPoint();
-    //actor->sprite->setAnchorPoint(anchor);
-
-   auto bodyNode = ax::Node::create();
-
     ax::Vec2 bodysize(32,32);
-
+    auto bodyNode = ax::Node::create();
     auto body = ax::PhysicsBody::createBox(bodysize);
     body->setContactTestBitmask(0xFFFFFFFF);
     body->setDynamic(true);
     bodyNode->setPhysicsBody(body);
 
     actor->AddChild(bodyNode);
-
-    getPhysicsWorld()->setDebugDrawMask(ax::PhysicsWorld::DEBUGDRAW_ALL);
-
-
 
     auto drawNode = ax::DrawNode::create();
     drawNode->drawRect(Vec2(-16, -16), Vec2(16, 16), ax::Color4F::RED);
@@ -542,8 +604,6 @@ void MainScene::Decording()
                     d.pos      = mPlayActor->sprite->getPosition();
                     TcpClient::get()->SendActorMessage(d);
                 }
-
-                
             }
         }
         break;
@@ -571,6 +631,7 @@ void MainScene::Decording()
         }
     } 
 }
+
 
 
 

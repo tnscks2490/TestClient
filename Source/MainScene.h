@@ -78,10 +78,17 @@ public:
 
     void Decording();
 
+    void CloneSetVisible(bool isvisible);
 
+    void SetTileNodes();
+    void OnOffTile();
 
+public:
+    std::vector<ax::Node* > mTileNodes;
 
-   
+    bool TileOn = false;
+    int width  = 80;
+    int height = 45;
 
 private:
     GameState _gameState = GameState::init;
@@ -101,5 +108,10 @@ private:
     Node* mAngel = nullptr;
     Node* mDarkAngel = nullptr;
     Node* mFarmer    = nullptr;
+
+
+ 
+
+
 };
 

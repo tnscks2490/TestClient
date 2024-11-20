@@ -11,8 +11,9 @@ Actor::Actor()
 
 Actor::~Actor()
 {
-    if (mRoot)
-        mRoot->release();
+    if (mMoveComp) delete mMoveComp;
+    if (mPJComp) delete mPJComp;
+
     //sprite->removeFromParent();
     //delete mMoveComp;
     //delete mPJComp;

@@ -180,6 +180,7 @@ void MainScene::SetTileNodes()
         {
             TileNode* mTileNode = TileNode::CreateTileNode(this);
             ax::Vec2 pos(8 + 16 * j, 8 + 16 * i);
+            mTileNode->idx = i * width + j;
             mTileNode->SetPosition(pos);
             mTileList.push_back(mTileNode);
         }
@@ -251,9 +252,18 @@ void MainScene::onMouseDown(Event* event)
         }
         if (TileOn)
         {
+            int x = mousePos.x / 16;
+            int y = mousePos.y / 16;
 
+            int Idx = y * width + x;
 
-
+            for (auto mTileNode : mTileList)
+            {
+                if (mTileNode->idx == Idx)
+                {
+                    mTileNode->ChangeDrawNode();
+                }
+            }
         }
     }
 }

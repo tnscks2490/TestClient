@@ -26,12 +26,16 @@
 #pragma once
 #include "axmol.h"
 #include "PrePacket.h"
+
 class Actor;
 
+class TileNode;
 
 class MainScene : public ax::Scene
 {
     typedef std::vector<Actor*> ActorList;
+    typedef std::vector<TileNode*> TileList;
+
     enum class GameState
     {
         init = 0,
@@ -84,8 +88,8 @@ public:
     void OnOffTile();
 
 public:
-    std::vector<ax::Node* > mTileNodes;
-
+    
+    TileList mTileList;
     bool TileOn = false;
     int width  = 80;
     int height = 45;
@@ -108,10 +112,5 @@ private:
     Node* mAngel = nullptr;
     Node* mDarkAngel = nullptr;
     Node* mFarmer    = nullptr;
-
-
- 
-
-
 };
 

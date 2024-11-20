@@ -29,6 +29,7 @@
 #include "MoveComp.h"
 #include "ProjectileComp.h"
 #include "PrePacket.h"
+#include "TileNode.h"
 
 using namespace ax;
 
@@ -177,23 +178,19 @@ void MainScene::SetTileNodes()
     {
         for (int j = 0; j < width; j++)
         {
-            ax::Node* node = ax::Node::create();
-            node->setPosition(8 + (j * 16), 8 + (i * 16));
-
-            auto drawNode = ax::DrawNode::create();
-            drawNode->drawRect(Vec2(-8, -8), Vec2(8, 8), ax::Color4F::RED);
-            node->addChild(drawNode);
-            mTileNodes.push_back(node);
-            addChild(node);
+            TileNode* mTileNode = TileNode::CreateTileNode(this);
+            ax::Vec2 pos(8 + 16 * j, 8 + 16 * i);
+            mTileNode->SetPosition(pos);
+            mTileList.push_back(mTileNode);
         }
     }
 }
 
 void MainScene::OnOffTile()
 {
-    for (auto tile : mTileNodes)
+    for (auto tile : mTileList)
     {
-        tile->setVisible(TileOn);
+        tile->mRoot->setVisible(TileOn);
     }
 }
 
@@ -254,17 +251,7 @@ void MainScene::onMouseDown(Event* event)
         }
         if (TileOn)
         {
-            int x = mousePos.x/16;
-            int y = mousePos.y / 16;
 
-            ax::Node* tile = mTileNodes[x * y];
-            tile->removeAllChildren();
-
-            auto drawNode = ax::DrawNode::create();
-
-            auto drawNode = ax::DrawNode::create();
-            drawNode->drawRect(Vec2(-8, -8), Vec2(8, 8), ax::Color4F::RED);
-            node->addChild(drawNode);
 
 
         }

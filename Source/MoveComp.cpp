@@ -22,6 +22,7 @@ void MoveComp::update(float delta)
         mTimer = 0;
     }
 
+    CheckTargetList();
     if (IsMoving)
     {
         Do_Moving();
@@ -37,6 +38,17 @@ void MoveComp::SetTarget(ax::Vec2 target)
 {
     mTarget  = target;
     IsMoving = true;
+}
+
+void MoveComp::SetPath(std::list<jpspath::Coord> ResultNodes)
+{
+    for (auto t : ResultNodes)
+    {
+        ax::Vec2 pos;
+        pos.x = (float)t.m_x * 16;
+        pos.y = (float)t.m_y * 16;
+        mTargetList.push_back(pos);
+    }
 }
 
 
@@ -88,4 +100,17 @@ void MoveComp::Do_Moving()
     }
     else
         mVelocity += mSpeed * Vec2DNormalized(mTarget - mActor->mRoot->getPosition());
+}
+
+void MoveComp::CheckTargetList()
+{
+    if (mTargetList.size() < 1)
+        return;
+
+    if (!IsMoving)
+    {
+        ax::Vec2 pos = mTargetList.front();
+        mTargetList.pop_front();
+        SetTarget(pos);
+    }
 }

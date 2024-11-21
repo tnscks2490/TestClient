@@ -30,6 +30,7 @@
 #include "ProjectileComp.h"
 #include "PrePacket.h"
 #include "TileNode.h"
+#include "PathFind.h"
 
 using namespace ax;
 
@@ -68,7 +69,16 @@ bool MainScene::init()
 
     TcpClient::get();
 
+    mPath = new PathFind(width,height);
 
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            printf("%d ", mPath->mColMap->IsCollision(j, i));
+        }
+        printf("\n");
+    }
 
     auto bg = ax::Sprite::create("whiteBG.png"sv);
     bg->setPosition(640, 360);
@@ -195,6 +205,22 @@ void MainScene::OnOffTile()
     }
 }
 
+std::list<jpspath::Coord> MainScene::PathSearch(ax::Vec2 targetPos)
+{
+    std::list<jpspath::Coord> ResultNodes;
+    jpspath::Path jps;
+    jps.Init(mPath->mColMap);
+
+    int32_t sx = mPlayActor->mRoot->getPosition().x / 16;
+    int32_t sy = mPlayActor->mRoot->getPosition().y / 16;
+    int32_t ex = targetPos.x / 16;
+    int32_t ey = targetPos.y / 16;
+
+    jps.Search(sx, sy, ex, ey, ResultNodes);
+    return ResultNodes;
+}
+
+
 
 
 void MainScene::onTouchesBegan(const std::vector<ax::Touch*>& touches, ax::Event* event)
@@ -295,6 +321,30 @@ void MainScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
     {
         TileOn = !TileOn;   
         OnOffTile();
+
+        if (!TileOn)
+        {
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    if (mTileList[i * width + j]->IsPass == true)
+                        mPath->mColMap->ClrAt(j, i);              
+                    else
+                        mPath->mColMap->SetAt(j, i);
+                }
+            }
+            ///////////////////////////////////
+            for (int i = height-1; i >= 0; i--)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    printf("%d ", mPath->mColMap->IsCollision(j, i));
+                }
+                printf("\n");
+            }
+        }
+
     }
 
     if (mPlayActor == nullptr)
@@ -479,6 +529,8 @@ void MainScene::SelectPlayActor(int charNum)
     mFarmer->setVisible(false);
 }
 
+
+
 Actor* MainScene::CreateActor(PK_Data data)
 {
     std::string_view name;
@@ -620,7 +672,9 @@ void MainScene::Decording()
             for (auto actor : mActorList)
             {
                 if (actor && actor->mID == data.ClientID)
-                    actor->mMoveComp->SetTarget(data.pos);
+                {
+                    actor->mMoveComp->SetPath(PathSearch(data.pos));
+                }
             }
         break;
         ///////////////////////

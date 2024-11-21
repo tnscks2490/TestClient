@@ -10,8 +10,9 @@ public:
     PathFind(int width, int height);
     ~PathFind() {}
 
+    
+public:
+
     jpspath::CollisionMap::SharedPtr mColMap = nullptr;
-
-
 
 };

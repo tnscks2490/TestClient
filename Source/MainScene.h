@@ -26,9 +26,11 @@
 #pragma once
 #include "axmol.h"
 #include "PrePacket.h"
+#include "JPSPathFinder.h"
+
 
 class Actor;
-
+class PathFind;
 class TileNode;
 
 class MainScene : public ax::Scene
@@ -87,6 +89,9 @@ public:
     void SetTileNodes();
     void OnOffTile();
 
+    std::list<jpspath::Coord> PathSearch(ax::Vec2 targetPos);
+
+
 public:
     
     TileList mTileList;
@@ -96,17 +101,26 @@ public:
 
 private:
     GameState _gameState = GameState::init;
+    ax::PhysicsWorld* mPhysicsWorld = nullptr;
 
     // 서버와 연동을 위한 클라이언트
 
+    // 캐릭터,투사체 모음
     ActorList mActorList;
     ActorList mPJList;
+
     // 실제 플레이 캐릭터
     Actor* mPlayActor = nullptr;
     int mPlayerNum    = 0;
 
+    // 길찾기 프로그램
 
-    ax::PhysicsWorld* mPhysicsWorld = nullptr;
+    PathFind* mPath;
+
+
+
+
+
     // 캐릭터 선택 견본
     // 선택후 전부 인비져블할 예정
     Node* mAngel = nullptr;

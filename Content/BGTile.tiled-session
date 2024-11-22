@@ -1,0 +1,75 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "untitled.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "": {
+            "scaleInEditor": 1
+        },
+        "#Path_Middle": {
+            "scaleInEditor": 1
+        },
+        "FarmLand_Tile.tsx": {
+            "scaleInDock": 1
+        },
+        "Fences.tsx": {
+            "scaleInDock": 3
+        },
+        "Grass_1_Middle.tsx": {
+            "scaleInDock": 1
+        },
+        "Grass_2_Anim.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Grass_Tiles_1.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "Path_Decoration.tsx": {
+            "scaleInDock": 1
+        },
+        "Path_Middle.tsx": {
+            "scaleInDock": 1
+        },
+        "untitled.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 769,
+                "y": 451.33333333333337
+            }
+        },
+        "untitled.tmx#Path_Middle": {
+            "scaleInDock": 1
+        }
+    },
+    "frame.defaultDuration": 100,
+    "last.imagePath": "C:/CC/LSC_TopHero/Content/Cute_Fantasy/Tiles/Grass",
+    "map.height": 45,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 80,
+    "openFiles": [
+        "untitled.tmx",
+        "Grass_Tiles_1.tsx",
+        "Grass_2_Anim.tsx"
+    ],
+    "project": "BGTile.tiled-project",
+    "recentFiles": [
+        "Grass_2_Anim.tsx",
+        "Grass_Tiles_1.tsx",
+        "untitled.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

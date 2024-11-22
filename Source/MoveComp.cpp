@@ -42,6 +42,11 @@ void MoveComp::SetTarget(ax::Vec2 target)
 
 void MoveComp::SetPath(std::list<jpspath::Coord> ResultNodes)
 {
+    if (mTargetList.size() > 0)
+    {
+       mTargetList.clear();
+    }
+
     for (auto t : ResultNodes)
     {
         ax::Vec2 pos;
@@ -49,6 +54,9 @@ void MoveComp::SetPath(std::list<jpspath::Coord> ResultNodes)
         pos.y = (float)t.m_y * 16;
         mTargetList.push_back(pos);
     }
+    mTargetList.pop_front();
+
+    printf("size of mTargetList : %d\n", mTargetList.size());
 }
 
 

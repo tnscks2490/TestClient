@@ -122,5 +122,6 @@ private:
     Node* mAngel = nullptr;
     Node* mDarkAngel = nullptr;
     Node* mFarmer    = nullptr;
+    Node* Obstacle   = nullptr;
 };
 

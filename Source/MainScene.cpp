@@ -80,9 +80,18 @@ bool MainScene::init()
         printf("\n");
     }
 
-    auto bg = ax::Sprite::create("whiteBG.png"sv);
+    /*auto bg = ax::Sprite::create("whiteBG.png"sv);
     bg->setPosition(640, 360);
-    this->addChild(bg);
+    this->addChild(bg);*/
+    auto mMap = ax::TMXTiledMap::create("untitled.tmx");
+    this->addChild(mMap);
+
+    ax::TMXLayer* road = mMap->getLayer("Road");
+    ax::TMXLayer* Weed = mMap->getLayer("Weed");
+    ax::TMXLayer* Wall = mMap->getLayer("Wall");
+    ax::TMXLayer* S = mMap->getLayer("S");
+
+
 
     /////////////////////////////
     // 2. add a menu item with "X" image, which is clicked to quit the program
@@ -144,8 +153,6 @@ bool MainScene::init()
     SetTileNodes();
     OnOffTile();
 
-
-
     // create and initialize a label
 
     auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
@@ -175,6 +182,11 @@ bool MainScene::init()
     mFarmer = Sprite::create("Farmer.png"sv);
     mFarmer->setPosition(900, 100);
     this->addChild(mFarmer);
+
+    Obstacle = Sprite::create("TownHall.png"sv);
+    Obstacle->setPosition(700, 500);
+    //this->addChild(Obstacle);
+
 
     scheduleUpdate();
 
@@ -432,7 +444,8 @@ void MainScene::update(float delta)
                 actor->update(delta);
                 
             }
-            // 삭제하기 꼭 수정할것
+            // 투사체 액터 삭제하기
+            // 나중에 꼭 수정할것
            /* if (actor->mRoot->isVisible() == false)
             {
                 delete actor->mMoveComp;

@@ -80,18 +80,38 @@ bool MainScene::init()
         printf("\n");
     }
 
-    /*auto bg = ax::Sprite::create("whiteBG.png"sv);
+    auto bg = ax::Sprite::create("RoadBG.png"sv);
     bg->setPosition(640, 360);
-    this->addChild(bg);*/
-    auto mMap = ax::TMXTiledMap::create("untitled.tmx");
-    this->addChild(mMap);
-
-    ax::TMXLayer* road = mMap->getLayer("Road");
+    this->addChild(bg);
+    //auto mMap = ax::TMXTiledMap::create("RoadBG.tmx");
+    //mMap->setName("Map");
+    //addChild(mMap);
+  
+    /*ax::TMXLayer* road = mMap->getLayer("Road");
     ax::TMXLayer* Weed = mMap->getLayer("Weed");
     ax::TMXLayer* Wall = mMap->getLayer("Wall");
-    ax::TMXLayer* S = mMap->getLayer("S");
+    ax::TMXLayer* S = mMap->getLayer("S");*/
 
+    auto sprite = ax::Sprite::create("grass/01.png");
+    sprite->setPosition(500, 500);
+    addChild(sprite);
 
+    auto spritecache = ax::SpriteFrameCache::getInstance();
+    spritecache->addSpriteFramesWithFile("grass.plist");
+
+    ax::Vector<ax::SpriteFrame*> animFrames;
+    char str[256];
+    for (int i = 0; i < 8; i++)
+    {
+        sprintf(str, "%02d.png",i);
+        animFrames.pushBack(spritecache->getSpriteFrameByName(str));
+
+    }
+    auto anim = ax::Animation::createWithSpriteFrames(animFrames, 0.2f);
+
+    auto mate = ax::Animate::create(anim);
+
+    sprite->runAction(ax::RepeatForever::create(mate));
 
     /////////////////////////////
     // 2. add a menu item with "X" image, which is clicked to quit the program

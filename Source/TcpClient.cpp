@@ -56,7 +56,7 @@ TcpClient* TcpClient::get()
 {
     if (!g)
     {
-        g = new TcpClient("172.30.1.26", 20202);
+        g = new TcpClient("127.0.0.1", 20202);
         //"172.30.1.26" 학원 IP
         //"192.168.1.105" 집 IP
         //"127.0.0.1" 로컬IP

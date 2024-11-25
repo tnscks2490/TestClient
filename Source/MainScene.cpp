@@ -80,39 +80,26 @@ bool MainScene::init()
         printf("\n");
     }
 
-    auto bg = ax::Sprite::create("RoadBG.png"sv);
+    /*auto bg = ax::Sprite::create("RoadBG.png"sv);
     bg->setPosition(640, 360);
-    this->addChild(bg);
-    //auto mMap = ax::TMXTiledMap::create("RoadBG.tmx");
-    //mMap->setName("Map");
-    //addChild(mMap);
+    this->addChild(bg);*/
+    auto mMap = ax::TMXTiledMap::create("TMXMap/Map2/map2.tmx");
+    mMap->setName("Map");
+    addChild(mMap);
+
+    auto lv = mMap->getLayers();
   
-    /*ax::TMXLayer* road = mMap->getLayer("Road");
-    ax::TMXLayer* Weed = mMap->getLayer("Weed");
-    ax::TMXLayer* Wall = mMap->getLayer("Wall");
-    ax::TMXLayer* S = mMap->getLayer("S");*/
+    auto wall = mMap->getLayer("MetaInfo");
+    auto grass = mMap->getLayer("Grass");
+    grass->getTileAnimManager()->startAll();
 
-    auto sprite = ax::Sprite::create("grass/01.png");
-    sprite->setPosition(500, 500);
-    addChild(sprite);
 
-    auto spritecache = ax::SpriteFrameCache::getInstance();
-    spritecache->addSpriteFramesWithFile("grass.plist");
+    auto yes = wall->getTileAt(ax::Vec2(25, 0));
+    auto no = wall->getTileAt(ax::Vec2(0, 0));
 
-    ax::Vector<ax::SpriteFrame*> animFrames;
-    char str[256];
-    for (int i = 0; i < 8; i++)
-    {
-        sprintf(str, "%02d.png",i);
-        animFrames.pushBack(spritecache->getSpriteFrameByName(str));
 
-    }
-    auto anim = ax::Animation::createWithSpriteFrames(animFrames, 0.2f);
-
-    auto mate = ax::Animate::create(anim);
-
-    sprite->runAction(ax::RepeatForever::create(mate));
-
+   
+    
     /////////////////////////////
     // 2. add a menu item with "X" image, which is clicked to quit the program
     //    you may modify it.
@@ -172,6 +159,22 @@ bool MainScene::init()
     // TileMap Start
     SetTileNodes();
     OnOffTile();
+
+     for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            auto t = wall->getTileAt(ax::Vec2(j, i));
+            if (t)
+            {
+                auto value = wall->getProperty("Wall");
+                if (value.asBool())
+                    mTileList[i * width + j]->ChangeDrawNode();
+            }
+        }
+    }
+
+
 
     // create and initialize a label
 

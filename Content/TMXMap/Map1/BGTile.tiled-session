@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "untitled.tmx",
+    "activeFile": "RoadBG.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -28,13 +28,31 @@
             "scaleInEditor": 1
         },
         "Grass_Tiles_1.tsx": {
-            "scaleInDock": 2,
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "Meta.tsx": {
+            "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "Path_Decoration.tsx": {
             "scaleInDock": 1
         },
         "Path_Middle.tsx": {
+            "scaleInDock": 1
+        },
+        "RoadBG.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 593.3333333333334,
+                "y": 469.33333333333326
+            }
+        },
+        "RoadBG.tmx#Grass_2_Anim": {
+            "scaleInDock": 1
+        },
+        "RoadBG.tmx#Path_Middle": {
             "scaleInDock": 1
         },
         "untitled.tmx": {
@@ -50,21 +68,25 @@
         }
     },
     "frame.defaultDuration": 100,
-    "last.imagePath": "C:/CC/LSC_TopHero/Content/Cute_Fantasy/Tiles/Grass",
+    "last.imagePath": "C:/CC/TestClient/Content",
     "map.height": 45,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "map.width": 80,
     "openFiles": [
-        "untitled.tmx",
+        "RoadBG.tmx",
         "Grass_Tiles_1.tsx",
-        "Grass_2_Anim.tsx"
+        "Grass_2_Anim.tsx",
+        "Meta.tsx"
     ],
     "project": "BGTile.tiled-project",
+    "property.type": "bool",
     "recentFiles": [
+        "Meta.tsx",
         "Grass_2_Anim.tsx",
         "Grass_Tiles_1.tsx",
+        "RoadBG.tmx",
         "untitled.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",

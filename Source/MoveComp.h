@@ -29,6 +29,6 @@ public:
 
     ax::Vec2 mTarget;
     ax::Vec2 mVelocity;
-    float mSpeed = 50.0f;
+    float mSpeed = 100.0f;
     float mTimer = 0.f;
 };

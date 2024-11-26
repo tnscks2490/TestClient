@@ -5,7 +5,6 @@
     },
     "activeFile": "map2.tmx",
     "expandedProjectPaths": [
-        "."
     ],
     "fileStates": {
         "BG.tsx": {
@@ -24,8 +23,8 @@
             "scale": 3,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 435.33333333333326,
-                "y": 310.3333333333333
+                "x": 647.3333333333333,
+                "y": 397
             }
         },
         "metaset.tsx": {

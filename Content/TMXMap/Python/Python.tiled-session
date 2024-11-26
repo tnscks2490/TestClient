@@ -1,0 +1,45 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "python.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "TMXTileSet_Animations.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 2
+        },
+        "python.tmx": {
+            "scale": 1,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 1091.5,
+                "y": 1028
+            }
+        }
+    },
+    "frame.defaultDuration": 200,
+    "map.height": 128,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 128,
+    "openFiles": [
+        "python.tmx",
+        "TMXTileSet_Animations.tsx"
+    ],
+    "project": "Python.tiled-project",
+    "property.type": "bool",
+    "recentFiles": [
+        "TMXTileSet_Animations.tsx",
+        "python.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
